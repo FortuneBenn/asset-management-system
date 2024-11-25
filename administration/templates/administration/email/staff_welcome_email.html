@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to UMAMS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            max-width: 600px;
+            margin: 0 auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #888888;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to UMAMS</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{ name }} {{ surname }},</p>
+            <p>We are excited to welcome you to the University of Mpumalanga Assets Management System (UMAMS).</p>
+            <p><strong>Your Staff Number:</strong> {{ staff_number }}</p>
+            <p>You can now access our system to manage and monitor your assets efficiently.</p>
+            <p>If you have any questions, feel free to contact us at <a href="mailto:umams1200@gmail.com">umams1200@gmail.com</a>.</p>
+            <a href="http://127.0.0.1:8000/auth/register/" class="btn btn-outline-secondary">Click here to Setup your password</a>
+            <p>Best regards,</p>
+            <p>The UMAMS Team</p>
+        </div>
+        <div class="footer">
+            <p>&copy; {{ year }} UMAMS. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

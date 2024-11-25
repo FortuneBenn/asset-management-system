@@ -1,0 +1,46 @@
+{% extends "administration/global/base.html" %}
+{% block content %}
+<div class="container">
+    <h1>View Staff</h1>
+    <p><strong>Name:</strong> {{ staff.name }} {{ staff.surname }}</p>
+    <p><strong>Staff Number:</strong> {{ staff.staff_number }}</p>
+    <p><strong>Status:</strong> {{ staff.status }}</p>
+    <p><strong>Office:</strong> 
+        {% if staff.office %}
+            {{ staff.office.building_name }} - {{ staff.office.office_number }}
+        {% else %}
+            No Office Assigned
+        {% endif %}
+    </p>
+
+    <h2>Assigned Assets</h2>
+    {% if assets %}
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Asset Name</th>
+                    <th>Barcode</th>
+                    <th>Serial Number</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for asset in assets %}
+                <tr>
+                    <td>{{ asset.name }}</td>
+                    <td>{{ asset.university_barcode }}</td>
+                    <td>{{ asset.serial_number }}</td>
+                    <td>{{ asset.status|title }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>No assets assigned to this staff member.</p>
+    {% endif %}
+
+    <a href="{% url 'staff-list' %}" class="btn btn-secondary mt-4">Back to List</a>
+</div>
+{% endblock %}

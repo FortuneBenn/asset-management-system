@@ -1,0 +1,117 @@
+{% extends "technician/global/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Technician Dashboard</h1>
+
+    <!-- Pending Repair Requests -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Pending Repair Requests</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Asset Name</th>
+                            <th>Reported Date</th>
+                            <th>Notes</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in pending_requests %}
+                        <tr>
+                            <td>{{ request.asset.name }}</td>
+                            <td>{{ request.reported_date }}</td>
+                            <td>{{ request.staff_notes }}</td>
+                            <td>
+                                <form method="post" action="{% url 'update-repair-status' request.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="in_progress">
+                                    <button type="submit" class="btn btn-warning btn-sm">Start Repair</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No pending requests.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- In-Progress Repair Requests -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">In-Progress Repair Requests</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Asset Name</th>
+                            <th>Reported Date</th>
+                            <th>Notes</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in in_progress_requests %}
+                        <tr>
+                            <td>{{ request.asset.name }}</td>
+                            <td>{{ request.reported_date }}</td>
+                            <td>{{ request.technician_notes }}</td>
+                            <td>
+                                <form method="post" action="{% url 'update-repair-status' request.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="fixed">
+                                    <button type="submit" class="btn btn-success btn-sm">Mark as Fixed</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No in-progress requests.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recently Fixed Requests -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Recently Fixed Requests</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Asset Name</th>
+                            <th>Reported Date</th>
+                            <th>Fixed Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in fixed_requests %}
+                        <tr>
+                            <td>{{ request.asset.name }}</td>
+                            <td>{{ request.reported_date }}</td>
+                            <td>{{ request.updated_at|date:"D, M j, Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">No recently fixed requests.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

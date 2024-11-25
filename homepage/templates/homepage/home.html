@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to UMAMS</title>
+    <link rel="stylesheet" href="{% static 'administration/assets/css/styles.min.css' %}">
+</head>
+<body>
+    <header class="bg-primary text-white py-4">
+        <div class="container text-center">
+            <h1>Welcome to the University of Mpumalanga Assets Management System (UMAMS)</h1>
+        </div>
+    </header>
+
+    <main class="container my-5">
+        <section class="mb-5">
+            <h2>About UMAMS</h2>
+            <p>
+                The University of Mpumalanga Assets Management System (UMAMS) is designed to streamline the management of university assets.
+                This platform empowers administrators, staff, and technicians to efficiently track, monitor, and manage assets to ensure 
+                optimal utilization and maintenance.
+            </p>
+        </section>
+
+        <section class="mb-5">
+            <h2>Features</h2>
+            <ul>
+                <li>Centralized asset management for improved visibility.</li>
+                <li>Role-based access for administrators, staff, and technicians.</li>
+                <li>Comprehensive repair and maintenance tracking.</li>
+                <li>Automated notifications for asset-related updates.</li>
+            </ul>
+        </section>
+
+        <section class="mb-5">
+            <h2>Our Mission</h2>
+            <p>
+                UMAMS aims to enhance operational efficiency at the University of Mpumalanga by providing a robust and user-friendly
+                platform for managing university assets. By utilizing this system, we hope to:
+            </p>
+            <ul>
+                <li>Reduce asset downtime and improve maintenance efficiency.</li>
+                <li>Enhance accountability and transparency in asset usage.</li>
+                <li>Provide actionable insights for better decision-making.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Get Started</h2>
+            <p>
+                Log in to explore the features of UMAMS tailored to your role:
+            </p>
+            <ul>
+                <li><strong>Administrators:</strong> Oversee asset management and generate reports.</li>
+                <li><strong>Staff:</strong> View assigned assets and report issues.</li>
+                <li><strong>Technicians:</strong> Manage repair requests and updates.</li>
+            </ul>
+        </section>
+
+        <!-- Conditional rendering for Login button -->
+        {% if not request.user.is_authenticated %}
+        <div class="text-center my-4">
+            <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Login</a>
+        </div>
+        {% endif %}
+    </main>
+
+    <footer class="bg-dark text-white text-center py-4">
+        <p>&copy; 2024 University of Mpumalanga. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>
+

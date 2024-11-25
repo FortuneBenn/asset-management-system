@@ -1,0 +1,27 @@
+{% extends "administration/global/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Asset Details</h5>
+            <div class="row">
+                <div class="col-md-4">
+                    <!-- Display asset image or default if none exists -->
+                    <img src="{% if asset.image %}{{ asset.image.url }}{% else %}{% static 'administration/assets/images/blog/blog-img3.jpg' %}{% endif %}"
+                         class="img-fluid" alt="Asset Image">
+                </div>
+                <div class="col-md-8">
+                    <h6>Name: {{ asset.name }}</h6>
+                    <p><strong>Barcode:</strong> {{ asset.university_barcode }}</p>
+                    <p><strong>Serial Number:</strong> {{ asset.serial_number }}</p>
+                    <p><strong>Status:</strong> {{ asset.status }}</p>
+                    <p><strong>Owner:</strong> {{ asset.owner }}</p>
+                    <a href="{% url 'admin-dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

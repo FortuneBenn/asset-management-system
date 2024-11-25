@@ -1,0 +1,71 @@
+{% load static %}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Register</title>
+  <link rel="stylesheet" href="{% static 'administration/assets/css/styles.min.css' %}">
+  <link rel="stylesheet" href="{% static 'administration/assets/libs/simplebar/dist/simplebar.min.css' %}">
+</head>
+
+<body>
+
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed">
+        <div
+        class="position-relative overflow-hidden radial-gradient min-vh-100 d-flex align-items-center justify-content-center">
+        <div class="d-flex align-items-center justify-content-center w-100">
+            <div class="row justify-content-center w-100">
+            <div class="col-md-8 col-lg-6 col-xxl-3">
+                <div class="card mb-0">
+                <div class="card-body">
+                    <!-- Reference the logo from administration static files -->
+                    <a href="#" class="text-nowrap logo-img text-center d-block py-3 w-100">
+                    <img src="{% static 'administration/assets/images/logos/logo2.png' %}" alt="Logo">
+                    </a>
+                    <p class="text-center">Register</p>
+                    <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_staff_number" class="form-label">Staff Number</label>
+                        {{ form.staff_number }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Username</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">Email Address</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.role.label_tag }}
+                        {{ form.role }}
+                    </div>
+                    <div class="mb-4">
+                        <label for="id_password" class="form-label">Password</label>
+                        {{ form.password }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4">Sign Up</button>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <p class="fs-4 mb-0 fw-bold">Already have an Account?</p>
+                        <a class="text-primary fw-bold ms-2" href="{% url 'login' %}">Sign In</a>
+                    </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+  <script src="{% static 'administration/assets/libs/jquery/dist/jquery.min.js' %}"></script>
+  <script src="{% static 'administration/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'administration/assets/libs/apexcharts/dist/apexcharts.min.js' %}"></script>
+  <script src="{% static 'administration/assets/libs/simplebar/dist/simplebar.js' %}"></script>
+  <script src="{% static 'administration/assets/js/sidebarmenu.js' %}"></script>
+  <script src="{% static 'administration/assets/js/app.min.js' %}"></script>
+  <script src="{% static 'administration/assets/js/dashboard.js' %}?v={{ timestamp }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+</html>

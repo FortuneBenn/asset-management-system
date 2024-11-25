@@ -1,0 +1,168 @@
+{% extends "administration/global/base.html" %}
+{% load static %}
+
+{% block content %}
+<h1>Welcome to the Admin Dashboard</h1>
+<div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title d-flex align-items-center gap-2 mb-4">
+                            Traffic Overview
+                            <span>
+                                <iconify-icon icon="solar:question-circle-bold" class="fs-7 d-flex text-muted"
+                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                            data-bs-custom-class="tooltip-success" data-bs-title="Traffic Overview"></iconify-icon>
+                            </span>
+                        </h5>
+                        <div id="traffic-overview"></div>
+                    </div>
+                </div>
+            
+        </div>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body text-center">
+              <img src="{% static 'administration/assets/images/backgrounds/product-tip.png' %}" alt="image" class="img-fluid" width="205">
+              <h4 class="mt-7">UMP ASSETS</h4>
+                <a href="{% url 'assets' %}" class="btn btn-primary mb-3">View Assets</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Currently Reported Issues</h5>
+                    <div class="table-responsive">
+                        <table class="table text-nowrap align-middle mb-0">
+                            <thead>
+                                <tr class="border-2 border-bottom border-primary">
+                                    <th scope="col" class="ps-0">Staff Name</th>
+                                    <th scope="col">Office Number</th>
+                                    <th scope="col" class="text-center">Device Name</th>
+                                    <th scope="col" class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-group-divider">
+                                {% for issue in reported_issues %}
+                                <tr>
+                                    <th scope="row" class="ps-0 fw-medium">
+                                        <span class="table-link1 text-truncate d-block">{{ issue.asset.owner.name }}</span>
+                                    </th>
+                                    <td>
+                                        <a href="javascript:void(0)" class="link-primary text-dark fw-medium d-block">
+                                            {{ issue.asset.owner.office.building_name }} {{ issue.asset.owner.office.office_number }}
+                                        </a>
+                                    </td>
+                                    <td class="text-center fw-medium">{{ issue.asset.name }}</td>
+                                    <td class="text-center fw-medium">{{ issue.status }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No reported issues</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title d-flex align-items-center gap-2 mb-5 pb-3">
+                Repair Requests Stats
+                <span>
+                    <iconify-icon icon="solar:question-circle-bold" class="fs-7 d-flex text-muted" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip-success" data-bs-title="Repair Request Stats"></iconify-icon>
+                </span>
+            </h5>
+
+            <div class="row">
+                <div class="col-4">
+                    <iconify-icon icon="solar:laptop-minimalistic-line-duotone" class="fs-7 d-flex text-primary"></iconify-icon>
+                    <span class="fs-11 mt-2 d-block text-nowrap">Pending</span>
+                    <h4 class="mb-0 mt-1">{{ repair_stats.pending.percentage }}%</h4>
+                </div>
+                <div class="col-4">
+                    <iconify-icon icon="solar:smartphone-line-duotone" class="fs-7 d-flex text-secondary"></iconify-icon>
+                    <span class="fs-11 mt-2 d-block text-nowrap">In Progress</span>
+                    <h4 class="mb-0 mt-1">{{ repair_stats.in_progress.percentage }}%</h4>
+                </div>
+                <div class="col-4">
+                    <iconify-icon icon="solar:tablet-line-duotone" class="fs-7 d-flex text-success"></iconify-icon>
+                    <span class="fs-11 mt-2 d-block text-nowrap">Fixed</span>
+                    <h4 class="mb-0 mt-1">{{ repair_stats.fixed.percentage }}%</h4>
+                </div>
+            </div>
+
+            <div class="vstack gap-4 mt-7 pt-2">
+                <!-- Progress bar for Pending -->
+                <div>
+                    <div class="hstack justify-content-between">
+                        <span class="fs-3 fw-medium">Pending</span>
+                        <h6 class="fs-3 fw-medium text-dark lh-base mb-0">{{ repair_stats.pending.percentage }}%</h6>
+                    </div>
+                    <div class="progress mt-6" role="progressbar" aria-label="Pending Repairs">
+                        <div class="progress-bar bg-primary" style="width: {{ repair_stats.pending.percentage }}%"></div>
+                    </div>
+                </div>
+
+                <!-- Progress bar for In Progress -->
+                <div>
+                    <div class="hstack justify-content-between">
+                        <span class="fs-3 fw-medium">In Progress</span>
+                        <h6 class="fs-3 fw-medium text-dark lh-base mb-0">{{ repair_stats.in_progress.percentage }}%</h6>
+                    </div>
+                    <div class="progress mt-6" role="progressbar" aria-label="In Progress Repairs">
+                        <div class="progress-bar bg-secondary" style="width: {{ repair_stats.in_progress.percentage }}%"></div>
+                    </div>
+                </div>
+
+                <!-- Progress bar for Fixed -->
+                <div>
+                    <div class="hstack justify-content-between">
+                        <span class="fs-3 fw-medium">Fixed</span>
+                        <h6 class="fs-3 fw-medium text-dark lh-base mb-0">{{ repair_stats.fixed.percentage }}%</h6>
+                    </div>
+                    <div class="progress mt-6" role="progressbar" aria-label="Fixed Repairs">
+                        <div class="progress-bar bg-success" style="width: {{ repair_stats.fixed.percentage }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        {% for technician in technicians %}
+        <div class="col-lg-4">
+            <div class="card overflow-hidden hover-img">
+                <div class="position-relative">
+                    <a href="javascript:void(0)">
+                        <!-- Dynamic technician image -->
+                        <img src="{% static 'administration/assets/images/blog/default-image.jpg' %}" class="card-img-top" alt="Technician Card Image">
+                    </a>
+                    <span class="badge text-bg-light text-dark fs-2 lh-sm mb-9 me-9 py-1 px-2 fw-semibold position-absolute bottom-0 end-0">
+                        {{ technician.read_time|default:"2 min Read" }}
+                    </span>
+                    <!-- Technician profile image -->
+                    <img src="{% static 'administration/assets/images/profile/default-profile.jpg' %}" alt="{{ technician.name }}" class="img-fluid rounded-circle position-absolute bottom-0 start-0 mb-n9 ms-9" width="40" height="40" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ technician.name }}">
+                </div>
+                <div class="card-body p-4">
+                    <!-- Technician name and role -->
+                    <span class="badge text-bg-light fs-2 py-1 px-2 lh-sm mt-3">{{ technician.role|default:"Technician" }}</span>
+                    <a class="d-block my-4 fs-5 text-dark fw-semibold link-primary" href="">{{ technician.status_message|default:"On my way to fix your laptop" }}</a>
+                    <div class="d-flex align-items-center gap-4">
+                        <!-- Additional technician details can go here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <script>
+            const newUsersData = {{ new_users_last_week|safe }};
+            const totalUsersData = {{ total_users_last_week|safe }};
+        </script>
+{% endblock %}

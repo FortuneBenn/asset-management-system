@@ -1,0 +1,88 @@
+{% extends "staff/global/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1>Welcome to the Staff Dashboard</h1>
+
+    <div class="row">
+        <!-- Assigned Assets -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Assigned Assets</h5>
+                    <ul class="list-group">
+                        {% for asset in assigned_assets %}
+                            <li class="list-group-item">
+                                <strong>{{ asset.name }}</strong> - {{ asset.status }}
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-muted">No assets assigned.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Open Requests -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Open Repair Requests</h5>
+                    <ul class="list-group">
+                        {% for request in open_requests %}
+                            <li class="list-group-item">
+                                {{ request.asset.name }} - {{ request.status|title }}
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-muted">No open requests.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <!-- Issues Reported -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Issues Reported</h5>
+                    <h1>{{ issue_count }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        {% for technician in technicians %}
+        <div class="col-lg-4">
+            <div class="card overflow-hidden hover-img">
+                <div class="position-relative">
+                    <a href="javascript:void(0)">
+                        <!-- Dynamic technician image -->
+                        <img src="{% static 'administration/assets/images/blog/default-image.jpg' %}" class="card-img-top" alt="Technician Card Image">
+                    </a>
+                    <span class="badge text-bg-light text-dark fs-2 lh-sm mb-9 me-9 py-1 px-2 fw-semibold position-absolute bottom-0 end-0">
+                        {{ technician.read_time|default:"2 min Read" }}
+                    </span>
+                    <!-- Technician profile image -->
+                    <img src="{% static 'administration/assets/images/profile/default-profile.jpg' %}" alt="{{ technician.name }}" class="img-fluid rounded-circle position-absolute bottom-0 start-0 mb-n9 ms-9" width="40" height="40" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ technician.name }}">
+                </div>
+                <div class="card-body p-4">
+                    <!-- Technician name and role -->
+                    <span class="badge text-bg-light fs-2 py-1 px-2 lh-sm mt-3">{{ technician.role|default:"Technician" }}</span>
+                    <a class="d-block my-4 fs-5 text-dark fw-semibold link-primary" href="">{{ technician.status_message|default:"On my way to fix your laptop" }}</a>
+                    <div class="d-flex align-items-center gap-4">
+                        <!-- Additional technician details can go here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <script>
+            const newUsersData = {{ new_users_last_week|safe }};
+            const totalUsersData = {{ total_users_last_week|safe }};
+        </script>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "staff/global/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Asset Details</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="{% if asset.image %}{{ asset.image.url }}{% else %}{% static 'administration/assets/images/blog/blog-img3.jpg' %}{% endif %}"
+                         class="img-fluid rounded" alt="Asset Image">
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Name:</strong> {{ asset.name }}</p>
+                    <p><strong>Barcode:</strong> {{ asset.university_barcode }}</p>
+                    <p><strong>Serial Number:</strong> {{ asset.serial_number }}</p>
+                    <p><strong>Status:</strong> {{ asset.status }}</p>
+                    <p><strong>Owner:</strong> {{ asset.owner }}</p>
+                </div>
+            </div>
+            <hr>
+            {% if unresolved_request %}
+            <div class="alert alert-warning">
+                This asset has already been reported and is awaiting repair.
+            </div>
+            {% else %}
+            <form method="post" action="{% url 'report-asset' asset.id %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="issue_description" class="form-label">Describe the Issue</label>
+                    <textarea name="issue_description" id="issue_description" class="form-control" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-danger">Report Asset</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

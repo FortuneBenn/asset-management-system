@@ -1,0 +1,69 @@
+{% extends "staff/global/base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Repair Request List</h1>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead>
+                        <tr class="table-primary">
+                            <th scope="col">Asset Name</th>
+                            <th scope="col">Reported Date</th>
+                            <th scope="col">Technician Notes</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in open_requests %}
+                        <tr>
+                            <td>{{ request.asset.name }}</td>
+                            <td>{{ request.reported_date }}</td>
+                            <td>{{ request.technician_notes|default:"No notes available" }}</td>
+                            <td>
+                                <span class="badge {% if request.status == 'pending' %}bg-warning{% elif request.status == 'in_progress' %}bg-info{% elif request.status == 'fixed' %}bg-success{% endif %}">
+                                    {{ request.status|title }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No repair requests found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination controls -->
+            <div class="d-flex justify-content-center mt-4">
+                {% if is_paginated %}
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% for num in page_obj.paginator.page_range %}
+                            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
