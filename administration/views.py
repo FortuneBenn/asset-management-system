@@ -5,6 +5,16 @@ from django.views import View
 from django.core.paginator import Paginator
 from auth_app.models import User
 from .models import Asset, Staff, Office
+import matplotlib.pyplot as plt
+from io import BytesIO
+import base64
+from django.template.loader import render_to_string
+from weasyprint import HTML
+from django.http import HttpResponse
+import calendar
+from django.utils.timezone import now
+from django.db.models import Count
+
 from django.urls import reverse_lazy
 from .forms import AssetForm, StaffForm
 from django.views.generic import CreateView
@@ -287,3 +297,64 @@ class TechnicianListView(ListView):
 
     def get_queryset(self):
         return User.objects.filter(role="technician")
+
+def generate_pdf_report(request):
+    # Get current year
+    current_year = now().year
+
+    # Generate months
+    months = [calendar.month_name[i] for i in range(1, 13)]
+
+    # Gather data for repair requests by month
+    repair_data = (
+        RepairRequest.objects.filter(reported_date__year=current_year)
+        .values("reported_date__month")
+        .annotate(total=Count("id"))
+    )
+
+    # Prepare data for the chart
+    repairs_by_month = [0] * 12
+    for data in repair_data:
+        repairs_by_month[data["reported_date__month"] - 1] = data["total"]
+
+    # Create a bar chart
+    plt.figure(figsize=(10, 6))  # Increase size for better visibility
+    plt.bar(months, repairs_by_month, color="skyblue")
+    plt.title("Repair Requests by Month", fontsize=16)
+    plt.xlabel("Months", fontsize=12)
+    plt.ylabel("Number of Requests", fontsize=12)
+    plt.xticks(rotation=45, ha="right")  # Rotate month names for better fit
+    plt.tight_layout()  # Adjust layout to fit everything properly
+
+    # Save the chart to a bytes buffer
+    buffer = BytesIO()
+    plt.savefig(buffer, format="png")
+    buffer.seek(0)
+    chart_base64 = base64.b64encode(buffer.read()).decode("utf-8")
+    buffer.close()
+    plt.close()
+
+    # Gather staff data and their assigned asset counts
+    staff_assets = Staff.objects.annotate(asset_count=Count("asset")).values(
+        "name", "surname", "asset_count"
+    )
+
+    # Prepare report data
+    report_data = {
+        "title": "Monthly Report",
+        "chart": chart_base64,
+        "staff_assets": staff_assets,
+    }
+
+    # Render the report HTML
+    html_string = render_to_string(
+        'administration/pages/reports/pdf_template.html', report_data
+    )
+
+    # Generate PDF
+    pdf_file = HTML(string=html_string).write_pdf()
+
+    # Return PDF response
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="report.pdf"'
+    return response

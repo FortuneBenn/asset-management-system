@@ -2,6 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import AdminDashboardView, ViewStaffView, AssetsListView, AssetCreateView, AssetDetailView, RepairRequestListView, StaffListView, AddStaffView, EditStaffView, DeleteStaffView, TechnicianListView
+from .views import generate_pdf_report
 
 urlpatterns = [
     path('dashboard/', AdminDashboardView.as_view(), name='admin-dashboard'),
@@ -9,6 +10,7 @@ urlpatterns = [
     path('assets/add/', AssetCreateView.as_view(), name='add-asset'),
     path('assets/<int:pk>/', AssetDetailView.as_view(), name='asset-detail'),
     path('requests/', RepairRequestListView.as_view(), name='request-list'),
+    path('reports/pdf/', generate_pdf_report, name='generate-pdf'),
     path('staff/', StaffListView.as_view(), name='staff-list'),
     path('staff/add/', AddStaffView.as_view(), name='add-staff'),
     path('<int:pk>/', ViewStaffView.as_view(), name='view-staff'),

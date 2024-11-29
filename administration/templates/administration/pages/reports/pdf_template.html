@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }}</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+
+    <!-- Chart -->
+    <h2>Repair Requests by Month</h2>
+    <img src="data:image/png;base64,{{ chart }}" alt="Repair Requests Chart">
+
+    <!-- Table -->
+    <h2>Staff and Assigned Assets</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Staff Name</th>
+                <th>Assigned Assets</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for staff in staff_assets %}
+            <tr>
+                <td>{{ staff.name }} {{ staff.surname }}</td>
+                <td>{{ staff.asset_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -119,3 +119,35 @@ class UserProfileUpdateView(UpdateView):
     def form_invalid(self, form):
         messages.error(self.request, "Please correct the errors below.")
         return self.render_to_response(self.get_context_data(form=form))
+    
+class StaffProfileView(DetailView):
+    model = User
+    template_name = "auth_app/staff_profile.html"
+    context_object_name = "user"
+
+    def get_object(self):
+        return self.request.user  # Fetch the current logged-in user
+
+# View for updating user profile
+class StaffProfileUpdateView(UpdateView):
+    model = User
+    template_name = "auth_app/staff_profile_edit.html"
+    form_class = UserChangeForm  # Pre-built form that handles user profile fields like email, password, etc.
+    context_object_name = "user"
+
+    def get_object(self):
+        return self.request.user  # Fetch the current logged-in user
+
+    def form_valid(self, form):
+        user = form.save()
+        # Update the session to keep the user logged in after updating the password
+        if 'password' in form.changed_data:
+            update_session_auth_hash(self.request, user)  # Prevent user from being logged out after password change
+
+        messages.success(self.request, "Your profile has been updated successfully.")
+        return redirect('staff_profile')  # Redirect to the user profile page
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Please correct the errors below.")
+        return self.render_to_response(self.get_context_data(form=form))
+

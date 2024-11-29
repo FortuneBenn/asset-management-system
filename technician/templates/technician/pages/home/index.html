@@ -13,6 +13,8 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
+                            <th>By</th>
+                            <th>Office</th>
                             <th>Asset Name</th>
                             <th>Reported Date</th>
                             <th>Notes</th>
@@ -22,6 +24,8 @@
                     <tbody>
                         {% for request in pending_requests %}
                         <tr>
+                            <td>{{ request.asset.owner.name }}</td>
+                            <td>{{ request.asset.owner.office.building_name }} {{ request.asset.owner.office.office_number }}</td>
                             <td>{{ request.asset.name }}</td>
                             <td>{{ request.reported_date }}</td>
                             <td>{{ request.staff_notes }}</td>
@@ -52,6 +56,8 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
+                            <th>By</th>
+                            <th>Office</th>
                             <th>Asset Name</th>
                             <th>Reported Date</th>
                             <th>Notes</th>
@@ -61,6 +67,8 @@
                     <tbody>
                         {% for request in in_progress_requests %}
                         <tr>
+                            <td>{{ request.asset.owner.name }}</td>
+                            <td>{{ request.asset.owner.office.building_name }} {{ request.asset.owner.office.office_number }}</td>
                             <td>{{ request.asset.name }}</td>
                             <td>{{ request.reported_date }}</td>
                             <td>{{ request.technician_notes }}</td>
@@ -91,6 +99,8 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
+                            <th>By</th>
+                            <th>Office</th>
                             <th>Asset Name</th>
                             <th>Reported Date</th>
                             <th>Fixed Date</th>
@@ -99,6 +109,8 @@
                     <tbody>
                         {% for request in fixed_requests %}
                         <tr>
+                            <td>{{ request.asset.owner.name }}</td>
+                            <td>{{ request.asset.owner.office.building_name }} {{ request.asset.owner.office.office_number }}</td>
                             <td>{{ request.asset.name }}</td>
                             <td>{{ request.reported_date }}</td>
                             <td>{{ request.updated_at|date:"D, M j, Y" }}</td>
