@@ -8,13 +8,18 @@ from .models import Asset, Staff, Office
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
+from barcode.writer import ImageWriter
+from django.http import JsonResponse
+import barcode
+import os
 from django.template.loader import render_to_string
 from weasyprint import HTML
 from django.http import HttpResponse
+from django.conf import settings
 import calendar
 from django.utils.timezone import now
 from django.db.models import Count
-
+from .barcode_utils import generate_barcode
 from django.urls import reverse_lazy
 from .forms import AssetForm, StaffForm
 from django.views.generic import CreateView
@@ -22,10 +27,11 @@ from django.views.generic import DetailView
 from django.views.generic import ListView
 from technician.models import RepairRequest
 import pandas as pd
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.views.generic.edit import DeleteView
 from django.views.generic.edit import UpdateView
+import zipfile
 
 
 class AdminDashboardView(LoginRequiredMixin, TemplateView):
@@ -358,3 +364,68 @@ def generate_pdf_report(request):
     response = HttpResponse(pdf_file, content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename="report.pdf"'
     return response
+
+def generate_all_barcodes(request):
+    # Ensure the barcodes directory exists
+    barcodes_dir = os.path.join(settings.MEDIA_ROOT, 'barcodes')
+    if not os.path.exists(barcodes_dir):
+        os.makedirs(barcodes_dir)
+
+    # Collect all assets
+    assets = Asset.objects.all()
+    zip_filename = os.path.join(settings.MEDIA_ROOT, 'barcodes.zip')
+
+    # Create a zip file to store the barcodes
+    with zipfile.ZipFile(zip_filename, 'w') as zip_file:
+        for asset in assets:
+            # Generate barcode for each asset
+            barcode_file_path = os.path.join(barcodes_dir, f"{asset.university_barcode}.png")
+            ean = barcode.get('code128', asset.university_barcode, writer=ImageWriter())
+            ean.save(barcode_file_path)
+
+            # Add the barcode image to the zip file
+            zip_file.write(barcode_file_path, os.path.basename(barcode_file_path))
+
+    # Return the zip file as a response
+    with open(zip_filename, 'rb') as zip_file:
+        response = HttpResponse(zip_file.read(), content_type='application/zip')
+        response['Content-Disposition'] = f'attachment; filename="barcodes.zip"'
+        return response
+    
+
+def asset_by_barcode(request, barcode):
+    """
+    Handle barcode scanning and return asset details.
+    """
+    asset = get_object_or_404(Asset, university_barcode=barcode)
+
+    # Return asset information as JSON
+    return JsonResponse({
+        "name": asset.name,
+        "barcode": asset.university_barcode,
+        "serial_number": asset.serial_number,
+        "status": asset.status,
+        "owner": asset.owner.name if asset.owner else "Unassigned",
+        "image_url": asset.image.url if asset.image else None,
+    })
+
+def scan_barcode_view(request):
+    if request.method == "POST":
+        barcode = request.POST.get("barcode")
+        try:
+            asset = Asset.objects.get(university_barcode=barcode)
+            data = {
+                "success": True,
+                "asset": {
+                    "name": asset.name,
+                    "barcode": asset.university_barcode,
+                    "serial_number": asset.serial_number,
+                    "status": asset.status,
+                    "owner": f"{asset.owner.name} {asset.owner.surname}" if asset.owner else "No Owner",
+                },
+            }
+        except Asset.DoesNotExist:
+            data = {"success": False, "message": "Asset not found."}
+        return JsonResponse(data)
+
+    return render(request, "administration/pages/assets/scan_barcode.html")

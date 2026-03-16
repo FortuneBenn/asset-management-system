@@ -8,6 +8,7 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h5 class="card-title fw-semibold">List Of All Assets</h5>
                 <a href="{% url 'add-asset' %}" class="btn btn-success">Add New Asset</a>
+                <a href="{% url 'generate-barcodes' %}" class="btn btn-success">Generate All Barcodes</a>
             </div>
 
             <div class="row">
@@ -58,4 +59,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}

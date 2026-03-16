@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scan Barcode</title>
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.2.1/minified/html5-qrcode.min.js"></script>
+    <style>
+        #reader {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Scan Asset Barcode</h1>
+    <div id="reader"></div>
+    <div id="result" style="margin-top: 20px;">
+        <h3>Scanned Asset Details</h3>
+        <p id="details"></p>
+    </div>
+    <script>
+    const html5QrCode = new Html5Qrcode("reader");
+    const onScanSuccess = (decodedText) => {
+        // Send the scanned barcode to the server
+        fetch("{% url 'scan-barcode' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: new URLSearchParams({ barcode: decodedText }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    const asset = data.asset;
+                    document.getElementById("details").innerHTML = `
+                        <strong>Name:</strong> ${asset.name}<br>
+                        <strong>Barcode:</strong> ${asset.barcode}<br>
+                        <strong>Serial Number:</strong> ${asset.serial_number}<br>
+                        <strong>Status:</strong> ${asset.status}<br>
+                        <strong>Owner:</strong> ${asset.owner}
+                    `;
+                } else {
+                    document.getElementById("details").innerHTML = `<span style="color: red;">${data.message}</span>`;
+                }
+            })
+            .catch((err) => {
+                document.getElementById("details").innerHTML = `<span style="color: red;">Error: ${err.message}</span>`;
+            });
+    };
+
+    // Start the scanner
+    html5QrCode
+        .start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: 250 },
+            onScanSuccess,
+            (error) => console.warn("QR code scan error:", error)
+        )
+        .catch((err) => {
+            console.error("Error starting QR Code scanner:", err);
+            document.getElementById("details").innerHTML =
+                "<span style='color: red;'>Camera access was denied or unavailable. Please allow access.</span>";
+        });
+</script>
+
+</body>
+</html>

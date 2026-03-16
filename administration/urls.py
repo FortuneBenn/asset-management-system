@@ -2,7 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import AdminDashboardView, ViewStaffView, AssetsListView, AssetCreateView, AssetDetailView, RepairRequestListView, StaffListView, AddStaffView, EditStaffView, DeleteStaffView, TechnicianListView
-from .views import generate_pdf_report
+from .views import generate_pdf_report, generate_all_barcodes, asset_by_barcode, scan_barcode_view
 
 urlpatterns = [
     path('dashboard/', AdminDashboardView.as_view(), name='admin-dashboard'),
@@ -17,6 +17,9 @@ urlpatterns = [
     path('<int:pk>/edit/', EditStaffView.as_view(), name='edit-staff'),
     path('<int:pk>/delete/', DeleteStaffView.as_view(), name='delete-staff'),
     path("technicians/", TechnicianListView.as_view(), name="technician-list"),
+    path('generate-barcodes/', generate_all_barcodes, name='generate-barcodes'),
+    path('asset/barcode/<str:barcode>/', asset_by_barcode, name='asset-by-barcode'),
+    path("scan-barcode/", scan_barcode_view, name="scan-barcode"),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
